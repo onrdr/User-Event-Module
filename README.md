@@ -1,4 +1,4 @@
-# User-Event-App 
+# User-Event-Module 
 This module enables users to 
   - List a single event, 
   - List all the events, 
@@ -21,15 +21,16 @@ This module enables users to
 
 ### 1- Clone the repository
 ```
- git clone https://github.com/onrdr/User-Event-App
+ git clone https://github.com/onrdr/User-Event-Module
 ```
 
 ### 2- Navigate to the API Directory
 ```
- cd User-Event-App 
+ cd User-Event-Module
 ```
 
 ### 3- Build the docker image
+(If you get docker daemon is not running error, Please make sure that the docker is running on your device.)
 ```
  docker build -f API/Dockerfile  -t onur-user-events-api .
 ```
