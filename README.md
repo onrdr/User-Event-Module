@@ -1,4 +1,4 @@
-# User-Event-App 
+# User-Event-Module 
 This module enables users to 
   - List a single event, 
   - List all the events, 
