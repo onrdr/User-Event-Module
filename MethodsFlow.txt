@@ -1,0 +1,127 @@
+﻿
+THE LOGIC FLOW OF ALL SERVİCE AND CONTROLLER METHODS
+******************************************************************************************************************************
+
+==> GetEventInfoAsync(int eventId) 
+	*** Service Layer 
+	- If event is not in DB								=> return ErrorDataResult<Event>(Messages.EventNotFound)
+	- If event exists									=> return SuccessDataResult<Event>(requestedEvent)
+	*** Controller 
+	return result.Success ? Ok(result.Data) : BadRequest(result.Message)
+
+******************************************************************************************************************************
+
+==> GetAllEventsAsync(int page, int pageSize)
+	*** Service Layer
+	- If page or pagesize is less than 1				=> return ErrorDataResult<List<Event>>(Messages.PaginationNumberError)
+	- If event list is empty							=> return ErrorDataResult<List<Event>>(Messages.EmptyEventList)
+	- If there is at least one event					=> return SuccessDataResult<List<Event>>(events)
+	*** Controller 
+	- return result.Success ? Ok(result.Data) : BadRequest(result.Message)
+
+******************************************************************************************************************************
+
+==> GetCreatedEventListForUserAsync(int userId)
+	*** Service Layer
+	- If user is not in DB								=> return ErrorDataResult<List<Event>>(Messages.UserNotFound)
+	- If user does not have any events					=> return ErrorDataResult<List<Event>>(Messages.EmptyEventList)
+	- If user has at least one event					=> return SuccessDataResult<List<Event>>(userEvents)
+	*** Controller 
+	- return result.Success ? Ok(result.Data) : BadRequest(result.Message)
+
+******************************************************************************************************************************
+
+==> GetParticipatedEventListForUserAsync(int userId)
+	*** Service Layer
+	- If user is not in DB								=> return ErrorDataResult<List<Event>>(Messages.UserNotFound)
+	- If user does not have any events					=> return ErrorDataResult<List<Event>>(Messages.EmptyEventList)
+	- If user has at least one event					=> return SuccessDataResult<List<Event>>(userEvents)
+	*** Controller 
+	- return result.Success ? Ok(result.Data) : BadRequest(result.Message)
+
+******************************************************************************************************************************
+
+==> CreateEventAsync(int creatorId, Event newEvent)
+	*** Service Layer
+	- If user is not in DB								=> return ErrorDataResult<List<Event>>(Messages.UserNotFound)
+	- If user does not have any events					=> return SuccessDataResult<Event>(newEvent, Messages.EventAdded)
+	*** Controller 
+	- return result.Success ? Ok(result.Data) : BadRequest(result.Message)
+
+******************************************************************************************************************************
+
+==> UpdateEventAsync(Event updatedEvent)
+	*** Service Layer
+	- If user is not in DB								=> return ErrorDataResult<List<Event>>(Messages.UserNotFound)
+	- If event is not in DB								=> return ErrorDataResult<Event>(Messages.EventNotFound)
+	- If the creator and updater is different person	=> return ErrorDataResult<Event>(Messages.NotAuthorizeToUpdate);
+	- If the event is found and updated					=> return SuccessDataResult<Event>(@event, Messages.EventUpdated);
+	*** Controller 
+	- return result.Success ? Ok(result.Message) : BadRequest(result.Message) 
+
+******************************************************************************************************************************
+
+==> DeleteEventAsync(int userId, int eventId)
+	*** Service Layer
+	- If user is not in DB								=> return ErrorResult(Messages.UserNotFound)
+	- If event is not in DB								=> return ErrorResult(Messages.EventNotFound)
+	- If the creator and deleter is different person	=> return ErrorResult(Messages.UserNotAuthorizeToDelete)
+	- If the event is found and deleted					=> return SuccessResult(Messages.EventDeleted)
+	*** Controller 
+	- return result.Success ? Ok(result.Message) : BadRequest(result.Message) 
+
+******************************************************************************************************************************
+
+==> RegisterEvent(int userId, int eventId)
+	*** Service Layer
+	- If user is not in DB								=> return ErrorResult(Messages.UserNotFound)
+	- If event is not in DB								=> return ErrorResult(Messages.EventNotFound)
+	- If the creator wants to participate own event		=> return ErrorResult(Messages.CreatorCannotBeParticipant)
+	- If the user already has an invitation to event    => return new ErrorResult(Messages.AlreadyHaveAnInvitation);
+	- If the user already has participated before		=> return ErrorResult(Messages.UserAlreadyParticipated)
+	- If the user registered the event successfully		=> return SuccessResult(Messages.SuccessfulRegistration)
+	*** Controller 
+	- return result.Success ? Ok(result.Message) : BadRequest(result.Message) 
+
+******************************************************************************************************************************
+
+==> SendInvitationAsync(int eventId, List<int> userIds)
+	*** Service Layer 
+	- If invitor of the event is not in DB				=> return ErrorResult(Messages.CreatorNotFound)
+	- If event is not in DB								=> return ErrorResult(Messages.EventNotFound)
+	- If the invitor did not create the event			=> return ErrorResult(Messages.UserNotAuthorizeToInvite)
+	- If the invitee is not in DB						=> return ErrorResult(Messages.InviteeNotFound) 
+	- If the invitee already has registered				=> return ErrorResult(Messages.AlreadyParticipatingTheEvent);
+	- If invitation send successfully					=> return SuccessResult(Messages.InvitationSend)
+	*** Controller 
+	- return result.Success ? Ok(result.Message) : BadRequest(result.Message) 
+
+******************************************************************************************************************************
+
+==> GetReceivedInvitationsAsync(int userId)
+	*** Service Layer 
+	- If user is not in DB								=> return ErrorDataResult<List<Invitation>>(Messages.UserNotFound)
+	- If invitation list is empty						=> return ErrorDataResult<List<Invitation>>(Messages.EmptyReceivedInvitationList)
+	- If invitation list is not empty					=> return SuccessDataResult<List<Invitation>>(receivedInvitations) 
+	*** Controller 
+	- return result.Success ?  Ok(result.Data) : BadRequest(result.Message)
+
+******************************************************************************************************************************
+
+==> GetSentInvitationsAsync(int userId)
+	*** Service Layer 
+	- If user is not in DB								=> return ErrorDataResult<List<Invitation>>(Messages.UserNotFound)
+	- If invitation list is empty						=> return ErrorDataResult<List<Invitation>>(Messages.EmptySentInvitationList)
+	- If invitation list is not empty					=> return SuccessDataResult<List<Invitation>>(sentInvitations)
+	*** Controller 
+	- return result.Success ?  Ok(result.Data) : BadRequest(result.Message)
+
+******************************************************************************************************************************
+
+* ParticipateInvitationAsync(int invitationId)
+	*** Service Layer 
+	- If invitation is not in DB						=> return ErrorResult(Messages.InvitationNotFound) 
+	- If invitation found								=> return SuccessResult(Messages.InvitationAccepted);
+	*** Controller 
+	- return result.Success ?  Ok(result.Message) : BadRequest(result.Message)
+	
