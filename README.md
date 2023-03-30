@@ -21,12 +21,12 @@ This module enables users to
 
 ### 1- Clone the repository
 ```
- git clone https://github.com/onrdr/User-Event-App
+ git clone https://github.com/onrdr/User-Event-Module
 ```
 
 ### 2- Navigate to the API Directory
 ```
- cd User-Event-App 
+ cd User-Event-Module
 ```
 
 ### 3- Build the docker image
