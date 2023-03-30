@@ -657,6 +657,33 @@ public class EventServiceTests
     }
 
     [Test]
+    public async Task SendInvitationAsync_WhenUserAlreadyParticipatingTheEvent_ReturnsErrorResult()
+    {
+        // Arrange
+        var creator = DataFixture.GetUsers().First();
+        var user2 = DataFixture.GetUsers().First(u => u.Id == 2);
+        var user3 = DataFixture.GetUsers().First(u => u.Id == 3);
+        var eventToInvite = DataFixture.GetEvents().First();
+        eventToInvite.CreatorId = creator.Id;
+        eventToInvite.Participants = new List<Participant>
+    {
+        new Participant {UserId = user2.Id, EventId = eventToInvite.Id},
+        new Participant {UserId = user3.Id, EventId = eventToInvite.Id}
+    };
+        _dbContext.Users.AddRange(creator, user2, user3);
+        _dbContext.Events.Add(eventToInvite);
+        await _dbContext.SaveChangesAsync();
+        var userIds = new List<int> { 2, 3 };
+
+        // Action
+        var result = await _eventService.SendInvitationAsync(creator.Id, eventToInvite.Id, userIds);
+
+        // Assert
+        result.Should().BeOfType<ErrorResult>();
+        result.Message.Should().Be(Messages.AlreadyParticipatingTheEvent);
+    }
+
+    [Test]
     public async Task GetReceivedInvitationsAsync_WhenUserNotFound_ReturnsErrorDataResult()
     {
         // Arrange
