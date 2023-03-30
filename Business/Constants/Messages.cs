@@ -47,4 +47,6 @@ public static class Messages
     public const string PageSizeOver50 = "Page size should be less than or equal to 50";
 
     public const string AlreadyParticipatingTheEvent = "User has already participated / registered for the event";
+
+    public const string SelfInvitationNotAllowed = "The creator of the event cannot send invitation her/himself";
 }

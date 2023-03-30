@@ -176,7 +176,10 @@ public class EventService : IEventService
             return new ErrorResult(Messages.EventNotFound);
          
         if (!creator.CreatedEvents.Contains(eventToInvite))
-            return new ErrorResult(Messages.NotAuthorizeToInvite); 
+            return new ErrorResult(Messages.NotAuthorizeToInvite);
+
+        if (userIds.Contains(creatorId))
+            return new ErrorResult(Messages.SelfInvitationNotAllowed);
 
         var result = await InviteEachUserAsync(userIds, eventToInvite);
         if (!result.Success)

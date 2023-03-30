@@ -629,32 +629,7 @@ public class EventServiceTests
         // Assert
         result.Should().BeOfType<ErrorResult>();
         result.Message.Should().Be(Messages.InviteeNotFound);
-    }
-
-    [Test]
-    public async Task SendInvitationAsync_WhenInvitationSentSuccessfully_SendsInvitationsAndReturnsSuccessResult()
-    {
-        // Arrange
-        var creator = DataFixture.GetUsers().First();
-        var user2 = DataFixture.GetUsers().First(u => u.Id == 2);
-        var user3 = DataFixture.GetUsers().First(u => u.Id == 3);
-        var eventToInvite = DataFixture.GetEvents().First();
-        eventToInvite.CreatorId = creator.Id;
-        _dbContext.Users.AddRange(creator, user2, user3);
-        _dbContext.Events.Add(eventToInvite);
-        await _dbContext.SaveChangesAsync();
-        var userIds = new List<int> { 2, 3 };
-        var initialInvitationCount = _dbContext.Invitations.ToListAsync().Result.Count;
-
-        // Action
-        var result = await _eventService.SendInvitationAsync(creator.Id, eventToInvite.Id, userIds);
-
-        // Assert
-        result.Should().BeOfType<SuccessResult>();
-        result.Message.Should().Be(Messages.InvitationsSend);
-        var finalInvitationCount = _dbContext.Invitations.ToListAsync().Result.Count;
-        finalInvitationCount.Should().Be(initialInvitationCount + userIds.Count);
-    }
+    } 
 
     [Test]
     public async Task SendInvitationAsync_WhenUserAlreadyParticipatingTheEvent_ReturnsErrorResult()
@@ -681,6 +656,51 @@ public class EventServiceTests
         // Assert
         result.Should().BeOfType<ErrorResult>();
         result.Message.Should().Be(Messages.AlreadyParticipatingTheEvent);
+    }
+
+    [Test]
+    public async Task SendInvitationAsync_WhenSendingSelfInvitation_ReturnsErrorResult()
+    {
+        // Arrange
+        var creator = DataFixture.GetUsers().First();
+        var eventToInvite = DataFixture.GetEvents().First();
+        eventToInvite.CreatorId = creator.Id;
+        _dbContext.Users.Add(creator);
+        _dbContext.Events.Add(eventToInvite);
+        await _dbContext.SaveChangesAsync();
+        var userIds = new List<int> { creator.Id };
+
+        // Action
+        var result = await _eventService.SendInvitationAsync(creator.Id, eventToInvite.Id, userIds);
+
+        // Assert
+        result.Should().BeOfType<ErrorResult>();
+        result.Message.Should().Be(Messages.SelfInvitationNotAllowed);
+    }
+
+    [Test]
+    public async Task SendInvitationAsync_WhenInvitationSentSuccessfully_SendsInvitationsAndReturnsSuccessResult()
+    {
+        // Arrange
+        var creator = DataFixture.GetUsers().First();
+        var user2 = DataFixture.GetUsers().First(u => u.Id == 2);
+        var user3 = DataFixture.GetUsers().First(u => u.Id == 3);
+        var eventToInvite = DataFixture.GetEvents().First();
+        eventToInvite.CreatorId = creator.Id;
+        _dbContext.Users.AddRange(creator, user2, user3);
+        _dbContext.Events.Add(eventToInvite);
+        await _dbContext.SaveChangesAsync();
+        var userIds = new List<int> { 2, 3 };
+        var initialInvitationCount = _dbContext.Invitations.ToListAsync().Result.Count;
+
+        // Action
+        var result = await _eventService.SendInvitationAsync(creator.Id, eventToInvite.Id, userIds);
+
+        // Assert
+        result.Should().BeOfType<SuccessResult>();
+        result.Message.Should().Be(Messages.InvitationsSend);
+        var finalInvitationCount = _dbContext.Invitations.ToListAsync().Result.Count;
+        finalInvitationCount.Should().Be(initialInvitationCount + userIds.Count);
     }
 
     [Test]
