@@ -30,6 +30,7 @@ This module enables users to
 ```
 
 ### 3- Build the docker image
+(If you get docker daemon is not running error, Please make sure that the docker is running on your device.)
 ```
  docker build -f API/Dockerfile  -t onur-user-events-api .
 ```
