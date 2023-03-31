@@ -31,7 +31,7 @@ This module enables users to
 
 ### 3- Run the unit tests 
 ```
- dotnet run
+ dotnet test
 ```
 
 ### 4- Build the docker image
