@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Constants;
 using Business.Services.Abstract; 
 using Microsoft.AspNetCore.Mvc; 
 using Models.Concrete.DTOs;
@@ -19,17 +20,17 @@ public class EventsController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet(nameof(GetEvent))]
+    [HttpGet("{eventId}")]
     public async Task<IActionResult> GetEvent(int eventId)
     {
         var result = await _service.GetEventInfoAsync(eventId);
 
         return result.Success 
             ? Ok(result.Data) 
-            : BadRequest(result.Message);
+            : NotFound(result.Message);
     }
 
-    [HttpGet(nameof(GetAllEvents))]
+    [HttpGet]
     public async Task<IActionResult> GetAllEvents(int page, int pageSize)
     {
         var result = await _service.GetAllEventsAsync(page, pageSize);
@@ -39,27 +40,27 @@ public class EventsController : ControllerBase
             : BadRequest(result.Message);
     }
 
-    [HttpGet(nameof(GetCreatedEventListForUser))]
+    [HttpGet("created/{userId}")]
     public async Task<IActionResult> GetCreatedEventListForUser(int userId)
     {
         var result = await _service.GetCreatedEventListForUserAsync(userId);
 
         return result.Success 
             ? Ok(result.Data) 
-            : BadRequest(result.Message);
+            : NotFound(result.Message);
     }
 
-    [HttpGet(nameof(GetParticipatedEventListForUser))]
+    [HttpGet("participated/{userId}")]
     public async Task<IActionResult> GetParticipatedEventListForUser(int userId)
     {
         var result = await _service.GetParticipatedEventListForUserAsync(userId);
 
         return result.Success 
             ? Ok(result.Data) 
-            : BadRequest(result.Message);
+            : NotFound(result.Message);
     }  
 
-    [HttpPost(nameof(CreateEvent))]
+    [HttpPost]
     public async Task<IActionResult> CreateEvent(int creatorId, EventDto eventDto)
     { 
         var newEvent = _mapper.Map<Event>(eventDto); 
@@ -68,7 +69,7 @@ public class EventsController : ControllerBase
 
         return result.Success 
             ? Ok(result) 
-            : BadRequest(result.Message);
+            : NotFound(result.Message);
     }
 
     [HttpPut(nameof(UpdateEvent))]
@@ -82,7 +83,9 @@ public class EventsController : ControllerBase
 
         return result.Success 
             ? Ok(result) 
-            : BadRequest(result.Message);
+            : result.Message == Messages.NotAuthorizeToUpdate 
+                ? Forbid(result.Message)
+                : NotFound(result.Message);
     }
 
     [HttpDelete(nameof(DeleteEvent))]
