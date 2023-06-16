@@ -29,13 +29,18 @@ This module enables users to
  cd User-Event-Module
 ```
 
-### 3- Build the docker image
+### 3- Run the unit tests 
+```
+ dotnet test
+```
+
+### 4- Build the docker image
 (If you get docker daemon is not running error, Please make sure that the docker is running on your device.)
 ```
  docker build -f API/Dockerfile  -t onur-user-events-api .
 ```
 
-### 4- Start the docker container
+### 5- Start the docker container
 ```
  docker run -it --rm -p 5000:8090 onur-user-events-api
 ```
