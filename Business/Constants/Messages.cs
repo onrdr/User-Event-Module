@@ -10,8 +10,6 @@ public static class Messages
 
     public const string InviteeNotFound = "One of the invitee is not found";
 
-    public const string CreatorCannotBeParticipant = "Creator of the event cannot be listed as participant";
-
     public const string EmptyEventList = "Event list is empty";
 
     public const string EmptySentInvitationList = "You do not have any sent invitation to a user"; 
