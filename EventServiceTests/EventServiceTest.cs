@@ -33,7 +33,7 @@ public class EventServiceTests
     public void TearDown()
     {
         _dbContext.Database.EnsureDeleted();
-    } 
+    }
 
     [Test]
     public async Task GetEventInfoAsync_WhenEventDoesNotExist_ReturnsErrorDataResultWith()
@@ -122,7 +122,7 @@ public class EventServiceTests
         result.Should().BeOfType<SuccessDataResult<List<Event>>>();
         result.Data.Should().HaveCount(events.Count);
         result.Data.Should().BeEquivalentTo(events);
-    } 
+    }
 
     [Test]
     public async Task GetCreatedEventListForUserAsync_WhenUserDoesNotExis_ReturnsErrorDataResult()
@@ -492,7 +492,7 @@ public class EventServiceTests
 
         // Assert
         result.Should().BeOfType<ErrorResult>();
-        result.Message.Should().Be(Messages.CreatorCannotBeParticipant);
+        result.Message.Should().Be(Messages.SelfInvitationNotAllowed);
     }
 
     [Test]
@@ -629,7 +629,7 @@ public class EventServiceTests
         // Assert
         result.Should().BeOfType<ErrorResult>();
         result.Message.Should().Be(Messages.InviteeNotFound);
-    } 
+    }
 
     [Test]
     public async Task SendInvitationAsync_WhenUserAlreadyParticipatingTheEvent_ReturnsErrorResult()

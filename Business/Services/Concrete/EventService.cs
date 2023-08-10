@@ -146,9 +146,12 @@ public class EventService : IEventService
         if (eventToRegister is null)
             return new ErrorResult(Messages.EventNotFound);
 
+        if (eventToRegister.CreatorId == userId)
+            return new ErrorResult(Messages.SelfInvitationNotAllowed);
+
         var checkResult = CheckIfUserHaveAnInvitationToThisEvent(user, eventToRegister);
         if (!checkResult.Success)
-            return checkResult;
+            return checkResult; 
 
         var result = await RegisterUserIfNotRegisteredBefore(user, eventToRegister);
         if (!result.Success)
@@ -169,9 +172,13 @@ public class EventService : IEventService
             .Include(e => e.Creator).ThenInclude(e => e.InvitationsSent)
             .Include(e => e.Participants)
             .FirstOrDefaultAsync(e => e.Id == eventId);
+
         if (eventToInvite is null)
             return new ErrorResult(Messages.EventNotFound);
-         
+
+        if (creatorId == eventToInvite.CreatorId)
+            return new ErrorResult(Messages.SelfInvitationNotAllowed);
+
         if (!creator.CreatedEvents.Contains(eventToInvite))
             return new ErrorResult(Messages.NotAuthorizeToInvite);
 
