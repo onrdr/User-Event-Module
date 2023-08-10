@@ -174,10 +174,7 @@ public class EventService : IEventService
             .FirstOrDefaultAsync(e => e.Id == eventId);
 
         if (eventToInvite is null)
-            return new ErrorResult(Messages.EventNotFound);
-
-        if (creatorId == eventToInvite.CreatorId)
-            return new ErrorResult(Messages.SelfInvitationNotAllowed);
+            return new ErrorResult(Messages.EventNotFound); 
 
         if (!creator.CreatedEvents.Contains(eventToInvite))
             return new ErrorResult(Messages.NotAuthorizeToInvite);
@@ -272,6 +269,9 @@ public class EventService : IEventService
 
             if (user is null)
                 return new ErrorResult(Messages.InviteeNotFound);
+
+            if(user.Id == eventToInvite.CreatorId)
+                return new ErrorResult(Messages.SelfInvitationNotAllowed);
 
             foreach (var participant in eventToInvite.Participants)
             {
