@@ -36,7 +36,7 @@ public class EventServiceTests
     }
 
     [Test]
-    public async Task GetEventInfoAsync_WhenEventDoesNotExist_ReturnsErrorDataResultWith()
+    public async Task GetEventInfoAsync_WhenEventDoesNotExist_ReturnsErrorDataResultWithMessage()
     {
         // Action
         var result = await _eventService.GetEventInfoAsync(1);
@@ -47,7 +47,7 @@ public class EventServiceTests
     }
 
     [Test]
-    public async Task GetEventInfoAsync_WhenEventExists_ReturnsSuccessDataResul()
+    public async Task GetEventInfoAsync_WhenEventExists_ReturnsSuccessDataResult()
     {
         // Arrange  
         var eventToAdd = DataFixture.GetEvents().First();
