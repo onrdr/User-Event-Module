@@ -11,20 +11,19 @@ namespace WebAPI.Controllers;
 [Route("events")]
 public class EventsController : ControllerBase
 {
-    private readonly IEventService _service;
+    private readonly IEventService _eventService;
     private readonly IMapper _mapper;
 
     public EventsController(IEventService service, IMapper mapper)
     {
-        _service = service;
+        _eventService = service;
         _mapper = mapper;
     }
 
     [HttpGet("{eventId}")]
     public async Task<IActionResult> GetEvent(int eventId)
     {
-        var result = await _service.GetEventInfoAsync(eventId);
-
+        var result = await _eventService.GetEventInfoAsync(eventId);
         return result.Success
             ? Ok(result.Data)
             : NotFound(result.Message);
@@ -33,8 +32,7 @@ public class EventsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllEvents(int page, int pageSize)
     {
-        var result = await _service.GetAllEventsAsync(page, pageSize);
-
+        var result = await _eventService.GetAllEventsAsync(page, pageSize);
         return result.Success
             ? Ok(result.Data)
             : BadRequest(result.Message);
@@ -43,8 +41,7 @@ public class EventsController : ControllerBase
     [HttpGet("created/{userId}")]
     public async Task<IActionResult> GetCreatedEventListForUser(int userId)
     {
-        var result = await _service.GetCreatedEventListForUserAsync(userId);
-
+        var result = await _eventService.GetCreatedEventListForUserAsync(userId);
         return result.Success
             ? Ok(result.Data)
             : NotFound(result.Message);
@@ -53,8 +50,7 @@ public class EventsController : ControllerBase
     [HttpGet("participated/{userId}")]
     public async Task<IActionResult> GetParticipatedEventListForUser(int userId)
     {
-        var result = await _service.GetParticipatedEventListForUserAsync(userId);
-
+        var result = await _eventService.GetParticipatedEventListForUserAsync(userId);
         return result.Success
             ? Ok(result.Data)
             : NotFound(result.Message);
@@ -64,8 +60,7 @@ public class EventsController : ControllerBase
     public async Task<IActionResult> CreateEvent(int creatorId, EventDto eventDto)
     {
         var newEvent = _mapper.Map<Event>(eventDto);
-
-        var result = await _service.CreateEventAsync(creatorId, newEvent);
+        var result = await _eventService.CreateEventAsync(creatorId, newEvent);
 
         return result.Success
             ? Ok(result)
@@ -79,8 +74,7 @@ public class EventsController : ControllerBase
         eventToUpdate.Id = eventId;
         eventToUpdate.CreatorId = creatorId;
 
-        var result = await _service.UpdateEventAsync(eventToUpdate);
-
+        var result = await _eventService.UpdateEventAsync(eventToUpdate);
         return result.Success
             ? Ok(result)
             : result.Message == Messages.NotAuthorizeToUpdate
@@ -91,8 +85,7 @@ public class EventsController : ControllerBase
     [HttpDelete("{userId}/{eventId}")]
     public async Task<IActionResult> DeleteEvent(int creatorId, int eventId)
     {
-        var result = await _service.DeleteEventAsync(creatorId, eventId);
-
+        var result = await _eventService.DeleteEventAsync(creatorId, eventId);
         return result.Success
              ? Ok(result.Message)
              : result.Message == Messages.NotAuthorizeToDelete
@@ -103,8 +96,7 @@ public class EventsController : ControllerBase
     [HttpPost("register/{userId}/{eventId}")]
     public async Task<IActionResult> RegisterEvent(int userId, int eventId)
     {
-        var result = await _service.RegisterEventAsync(userId, eventId);
-
+        var result = await _eventService.RegisterEventAsync(userId, eventId);
         return result.Success
              ? Ok(result.Message)
              : result.Message == Messages.UserAlreadyParticipated || result.Message == Messages.AlreadyHaveAnInvitation
@@ -115,8 +107,7 @@ public class EventsController : ControllerBase
     [HttpPost("invite/{creatorId}/{eventId}")]
     public async Task<IActionResult> SendInvitation(InvitationDto data)
     {
-        var result = await _service.SendInvitationAsync(data.CreatorId, data.EventId, data.UserIds);
-
+        var result = await _eventService.SendInvitationAsync(data.CreatorId, data.EventId, data.UserIds);
         return result.Success
             ? Ok(result.Message)
             : result.Message == Messages.NotAuthorizeToInvite || result.Message == Messages.AlreadyParticipatingTheEvent 
@@ -127,8 +118,7 @@ public class EventsController : ControllerBase
     [HttpGet("users/{userId}/invitations/received")]
     public async Task<IActionResult> GetReceivedInvitations(int userId)
     {
-        var result = await _service.GetReceivedInvitationsAsync(userId);
-
+        var result = await _eventService.GetReceivedInvitationsAsync(userId);
         return result.Success
           ? Ok(result.Data)
           : NotFound(result.Message);
@@ -137,8 +127,7 @@ public class EventsController : ControllerBase
     [HttpGet("users/{userId}/invitations/sent")]
     public async Task<IActionResult> GetSentInvitations(int userId)
     {
-        var result = await _service.GetSentInvitationsAsync(userId);
-
+        var result = await _eventService.GetSentInvitationsAsync(userId);
         return result.Success
           ? Ok(result.Data)
           : NotFound(result.Message);
@@ -147,8 +136,7 @@ public class EventsController : ControllerBase
     [HttpPost("invitations/{invitationId}/participate")]
     public async Task<IActionResult> ParticipateInvitation(int invitationId)
     {
-        var result = await _service.ParticipateInvitationAsync(invitationId);
-
+        var result = await _eventService.ParticipateInvitationAsync(invitationId);
         return result.Success
             ? Ok(result.Message)
             : NotFound(result.Message);
