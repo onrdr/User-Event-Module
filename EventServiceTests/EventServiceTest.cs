@@ -854,15 +854,3 @@ public class EventServiceTests
         result.Message.Should().Be(Messages.InvitationAccepted);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
